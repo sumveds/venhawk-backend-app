@@ -21,7 +21,7 @@ SET @@SESSION.SQL_LOG_BIN= 0;
 -- GTID state at the beginning of the backup 
 --
 
-SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'e5c1a82e-f8aa-11f0-82db-eb4287e0cd61:1-30';
+SET @@GLOBAL.GTID_PURGED=/*!80000 '+'*/ 'e5c1a82e-f8aa-11f0-82db-eb4287e0cd61:1-41';
 
 --
 -- Table structure for table `client_industries`
@@ -41,6 +41,16 @@ CREATE TABLE `client_industries` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `client_industries`
+--
+
+LOCK TABLES `client_industries` WRITE;
+/*!40000 ALTER TABLE `client_industries` DISABLE KEYS */;
+INSERT INTO `client_industries` VALUES (1,'legal','Legal','2026-01-24 10:05:21');
+/*!40000 ALTER TABLE `client_industries` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `project_categories`
 --
 
@@ -56,6 +66,24 @@ CREATE TABLE `project_categories` (
   UNIQUE KEY `value` (`value`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `project_categories`
+--
+
+LOCK TABLES `project_categories` WRITE;
+/*!40000 ALTER TABLE `project_categories` DISABLE KEYS */;
+INSERT INTO project_categories (value, label) VALUES
+  ('legal-apps', 'Legal Application Implementations & Migrations (Intapp, iManage, NetDocuments, Elite, Aderant)'),
+  ('cloud-migration', 'Cloud Migrations & Modernization (Azure, AWS, GCP, hybrid cloud)'),
+  ('enterprise-it', 'Enterprise IT Implementations & Modernization (ServiceNow, Workday, M365 migrations, AV systems)'),
+  ('app-upgrades', 'Application Upgrades & Integrations (Legacy apps, custom systems, APIs)'),
+  ('collaboration', 'Collaboration & Document Management (Microsoft Teams, SharePoint, M365)'),
+  ('security', 'Security, Identity & Compliance (IAM, Entra ID, SOC2, zero trust)'),
+  ('data-archive', 'Data, Archive & eDiscovery (Email archive, retention, eDiscovery)'),
+  ('other', 'Other');
+/*!40000 ALTER TABLE `project_categories` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `projects`
@@ -99,8 +127,17 @@ CREATE TABLE `projects` (
   CONSTRAINT `chk_budget_range` CHECK (((`budget_max` is null) or (`budget_max` >= `budget_min`))),
   CONSTRAINT `chk_budget_single` CHECK ((((`budget_type` = _utf8mb4'single') and (`budget_amount` is not null) and (`budget_min` is null) and (`budget_max` is null)) or ((`budget_type` = _utf8mb4'range') and (`budget_amount` is null) and (`budget_min` is not null) and (`budget_max` is not null)))),
   CONSTRAINT `chk_category_custom` CHECK ((((`project_category_id` = 14) and (`project_category_custom` is not null)) or (`project_category_id` <> 14)))
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `projects`
+--
+
+LOCK TABLES `projects` WRITE;
+/*!40000 ALTER TABLE `projects` DISABLE KEYS */;
+/*!40000 ALTER TABLE `projects` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `users`
@@ -122,8 +159,17 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`),
   KEY `idx_auth0_id` (`auth0_id`),
   KEY `idx_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -135,4 +181,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-24 18:16:48
+-- Dump completed on 2026-01-25  3:08:31

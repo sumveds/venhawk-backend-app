@@ -1,9 +1,9 @@
-import { IsString, IsEnum, IsOptional, IsBoolean, IsDateString, ValidateIf, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsBoolean, IsDateString, ValidateIf, MinLength, MaxLength, IsNotEmpty } from 'class-validator';
 
 export class CreateProjectDto {
   // Page 1 - Project Details
   @IsString()
-  @IsEnum(['financial', 'healthcare', 'legal', 'saas', 'technology', 'government'])
+  @IsNotEmpty()
   clientIndustry: string;
 
   @IsString()
@@ -12,7 +12,7 @@ export class CreateProjectDto {
   projectTitle: string;
 
   @IsString()
-  @IsEnum(['erp', 'app-upgrades', 'cloud-migration', 'network', 'security', 'collaboration', 'data-analytics', 'disaster-recovery', 'itsm', 'endpoint', 'database', 'virtualization', 'cloud-security', 'other'])
+  @IsNotEmpty()
   projectCategory: string;
 
   @ValidateIf(o => o.projectCategory === 'other')
