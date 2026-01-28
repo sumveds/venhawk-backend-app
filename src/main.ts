@@ -4,6 +4,10 @@ import { AppModule } from './app.module';
 import { validateEnvironment } from './config/env.validation';
 
 async function bootstrap() {
+  console.log('🚀 VenHawk Backend starting...');
+  console.log('📍 Current directory:', process.cwd());
+  console.log('🌍 Node version:', process.version);
+
   // Validate environment variables before starting the app
   validateEnvironment();
 
