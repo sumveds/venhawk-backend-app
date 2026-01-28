@@ -140,6 +140,39 @@ LOCK TABLES `projects` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `project_files`
+--
+
+DROP TABLE IF EXISTS `project_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `project_files` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` bigint unsigned NOT NULL,
+  `file_url` varchar(2048) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Supabase storage URL',
+  `file_name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Original filename',
+  `file_size` bigint NOT NULL COMMENT 'File size in bytes',
+  `mime_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'MIME type of the file',
+  `uploaded_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL DEFAULT NULL COMMENT 'Soft delete timestamp',
+  PRIMARY KEY (`id`),
+  KEY `idx_project_id` (`project_id`),
+  KEY `idx_deleted_at` (`deleted_at`),
+  KEY `idx_project_files_lookup` (`project_id`,`deleted_at`),
+  CONSTRAINT `fk_project_files_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `project_files`
+--
+
+LOCK TABLES `project_files` WRITE;
+/*!40000 ALTER TABLE `project_files` DISABLE KEYS */;
+/*!40000 ALTER TABLE `project_files` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 

@@ -7,6 +7,9 @@ export function validateEnvironment() {
     'DB_USERNAME',
     'DB_PASSWORD',
     'DB_DATABASE',
+    'SUPABASE_URL',
+    'SUPABASE_ANON_KEY',
+    'SUPABASE_BUCKET_NAME',
   ];
 
   const missingVars: string[] = [];
@@ -18,7 +21,8 @@ export function validateEnvironment() {
       missingVars.push(varName);
       console.error(`❌ Missing: ${varName}`);
     } else {
-      console.log(`✅ Found: ${varName} = ${varName.includes('PASSWORD') ? '***' : value}`);
+      const shouldMask = varName.includes('PASSWORD') || varName.includes('KEY');
+      console.log(`✅ Found: ${varName} = ${shouldMask ? '***' : value}`);
     }
   });
 

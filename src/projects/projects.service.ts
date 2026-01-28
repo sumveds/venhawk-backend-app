@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Project } from './entities/project.entity';
 import { ClientIndustry } from './entities/client-industry.entity';
 import { ProjectCategory } from './entities/project-category.entity';
+import { ProjectFile } from '../files/entities/project-file.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UsersService } from '../users/users.service';
 
@@ -16,6 +17,8 @@ export class ProjectsService {
     private clientIndustriesRepository: Repository<ClientIndustry>,
     @InjectRepository(ProjectCategory)
     private projectCategoriesRepository: Repository<ProjectCategory>,
+    @InjectRepository(ProjectFile)
+    private projectFilesRepository: Repository<ProjectFile>,
     private usersService: UsersService,
   ) {}
 
@@ -92,6 +95,28 @@ export class ProjectsService {
 
     // 8. Create and save project
     const project = this.projectsRepository.create(projectData);
-    return await this.projectsRepository.save(project);
+    const savedProject = await this.projectsRepository.save(project);
+
+    // 9. Save file URLs to project_files table if provided
+    if (createProjectDto.fileUrls && createProjectDto.fileUrls.length > 0) {
+      const fileRecords = createProjectDto.fileUrls.map((fileUrl) => {
+        // Extract filename from URL (last part after /)
+        const urlParts = fileUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+
+        return this.projectFilesRepository.create({
+          project_id: savedProject.id,
+          file_url: fileUrl,
+          file_name: fileName,
+          file_size: 0, // Size not available from URL
+          mime_type: 'application/octet-stream', // Generic MIME type
+        });
+      });
+
+      await this.projectFilesRepository.save(fileRecords);
+      console.log(`✅ Saved ${fileRecords.length} file(s) for project ${savedProject.id}`);
+    }
+
+    return savedProject;
   }
 }
