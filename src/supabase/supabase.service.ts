@@ -71,4 +71,36 @@ export class SupabaseService {
       throw new InternalServerErrorException('Failed to upload file');
     }
   }
+
+  /**
+   * Delete a file from Supabase Storage by URL
+   * @param fileUrl - The public URL of the file to delete
+   */
+  async deleteFileByUrl(fileUrl: string): Promise<void> {
+    try {
+      // Extract file path from URL
+      // URL format: https://xxxxx.supabase.co/storage/v1/object/public/bucket-name/uploads/filename.ext
+      const urlParts = fileUrl.split('/');
+      const bucketIndex = urlParts.indexOf('public') + 1;
+      const filePath = urlParts.slice(bucketIndex + 1).join('/');
+
+      console.log(`🗑️  Deleting file from Supabase: ${filePath}`);
+
+      const { error } = await this.supabase.storage
+        .from(this.bucketName)
+        .remove([filePath]);
+
+      if (error) {
+        console.error('❌ Supabase delete error:', error);
+        throw new InternalServerErrorException(
+          `Failed to delete file: ${error.message}`,
+        );
+      }
+
+      console.log(`✅ File deleted successfully: ${filePath}`);
+    } catch (error) {
+      console.error('❌ Error deleting file:', error);
+      throw new InternalServerErrorException('Failed to delete file');
+    }
+  }
 }

@@ -1,10 +1,14 @@
 import {
   Controller,
   Post,
+  Delete,
+  Body,
   UploadedFile,
   UseInterceptors,
   UseGuards,
   BadRequestException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -28,5 +32,17 @@ export class FilesController {
     console.log(`📤 Received file upload request: ${file.originalname} (${file.size} bytes)`);
 
     return await this.filesService.uploadFile(file);
+  }
+
+  @Delete()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteFile(@Body('fileUrl') fileUrl: string): Promise<void> {
+    if (!fileUrl) {
+      throw new BadRequestException('File URL is required');
+    }
+
+    console.log(`🗑️  Received file delete request: ${fileUrl}`);
+
+    await this.filesService.deleteFile(fileUrl);
   }
 }

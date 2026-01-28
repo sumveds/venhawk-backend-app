@@ -60,6 +60,13 @@ export class FilesService {
   }
 
   /**
+   * Delete a file from Supabase
+   */
+  async deleteFile(fileUrl: string): Promise<void> {
+    return await this.supabaseService.deleteFileByUrl(fileUrl);
+  }
+
+  /**
    * Get max files allowed per project
    */
   getMaxFilesPerProject(): number {
