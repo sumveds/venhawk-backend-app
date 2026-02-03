@@ -96,6 +96,7 @@ CREATE TABLE `projects` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint unsigned NOT NULL COMMENT 'Foreign key to users.id',
   `project_title` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `system_name` varchar(180) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'System name for the project',
   `client_industry_id` int NOT NULL,
   `project_category_id` int NOT NULL,
   `project_category_custom` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom category when category is Other',

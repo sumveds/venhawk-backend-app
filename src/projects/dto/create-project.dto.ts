@@ -21,15 +21,23 @@ export class CreateProjectDto {
   @ValidateIf(o => o.projectCategory === 'other')
   @IsString()
   @MinLength(1)
-  @MaxLength(500)
+  @MaxLength(180)
   projectCategoryOther?: string;
 
   @IsString()
-  @MinLength(10)
+  @IsNotEmpty()
+  @MinLength(1)
+  @MaxLength(180)
+  systemName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(1)
   projectObjective: string;
 
   @IsString()
-  @MinLength(10)
+  @IsNotEmpty()
+  @MinLength(1)
   businessRequirements: string;
 
   @IsString()

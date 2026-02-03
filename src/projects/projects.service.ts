@@ -61,6 +61,7 @@ export class ProjectsService {
     const projectData: Partial<Project> = {
       user_id: user.id,
       project_title: createProjectDto.projectTitle,
+      system_name: createProjectDto.systemName,
       client_industry_id: clientIndustry.id,
       project_category_id: projectCategory.id,
       project_category_custom: createProjectDto.projectCategory === 'other' ? createProjectDto.projectCategoryOther : null,
