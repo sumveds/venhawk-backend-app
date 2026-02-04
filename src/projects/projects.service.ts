@@ -6,7 +6,9 @@ import { ClientIndustry } from './entities/client-industry.entity';
 import { ProjectCategory } from './entities/project-category.entity';
 import { ProjectFile } from '../files/entities/project-file.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
+import { CreateProjectResponseDto } from './dto/create-project-response.dto';
 import { UsersService } from '../users/users.service';
+import { VendorsService } from '../vendors/vendors.service';
 
 @Injectable()
 export class ProjectsService {
@@ -20,9 +22,10 @@ export class ProjectsService {
     @InjectRepository(ProjectFile)
     private projectFilesRepository: Repository<ProjectFile>,
     private usersService: UsersService,
+    private vendorsService: VendorsService,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto, auth0UserId: string): Promise<Project> {
+  async create(createProjectDto: CreateProjectDto, auth0UserId: string): Promise<CreateProjectResponseDto> {
     // 1. Lookup user by Auth0 ID
     const user = await this.usersService.findByAuth0Id(auth0UserId);
     if (!user) {
@@ -118,6 +121,27 @@ export class ProjectsService {
       console.log(`✅ Saved ${fileRecords.length} file(s) for project ${savedProject.id}`);
     }
 
-    return savedProject;
+    // 10. Find matching vendors based on project criteria
+    const matchedVendors = await this.vendorsService.findMatchingVendors(
+      createProjectDto.projectCategory,
+      createProjectDto.systemName,
+      projectData.budget_min,
+      projectData.budget_max,
+      projectData.budget_amount,
+      createProjectDto.startDate,
+      createProjectDto.endDate,
+    );
+
+    // 11. Return project with matched vendors
+    return {
+      project: {
+        id: savedProject.id,
+        project_title: savedProject.project_title,
+        system_name: savedProject.system_name,
+        status: savedProject.status,
+        created_at: savedProject.created_at,
+      },
+      matchedVendors,
+    };
   }
 }

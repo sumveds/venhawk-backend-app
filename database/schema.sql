@@ -204,6 +204,141 @@ LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- ============================================================================
+-- TABLE 1: VENDORS (Main table with ALL vendor info - 47 columns)
+-- ============================================================================
+
+DROP TABLE IF EXISTS vendors;
+
+CREATE TABLE vendors (
+    -- Primary Key
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vendor_id CHAR(36) UNIQUE NOT NULL COMMENT 'UUID from CSV',
+    
+    -- BASIC INFORMATION
+    brand_name VARCHAR(255) NOT NULL,
+    legal_name VARCHAR(255),
+    website_url VARCHAR(500) NOT NULL,
+    
+    -- COMPANY DETAILS
+    hq_country VARCHAR(100) DEFAULT 'USA',
+    hq_state VARCHAR(100),
+    company_size_band VARCHAR(50),
+    founded_year YEAR,
+    
+    -- SERVICE CLASSIFICATION
+    vendor_type VARCHAR(100),
+    engagement_models TEXT COMMENT 'Comma-separated list',
+    service_domains TEXT COMMENT 'Comma-separated list',
+    
+    -- TECHNICAL EXPERIENCE
+    platforms_experience TEXT,
+    legal_tech_stack TEXT COMMENT 'iManage, NetDocuments, Intapp, etc.',
+    
+    -- PROJECT & PRICING
+    lead_time_weeks INT,
+    capacity_band VARCHAR(20),
+    min_project_size_usd DECIMAL(12,2),
+    max_project_size_usd DECIMAL(12,2),
+    typical_duration_weeks_min INT,
+    typical_duration_weeks_max INT,
+    pricing_signal_notes TEXT,
+    
+    -- PROOF POINTS
+    case_study_count_public INT DEFAULT 0,
+    reference_available ENUM('Y', 'N', 'Unk') DEFAULT 'Unk',
+    proof_link_1 VARCHAR(500),
+    proof_link_2 VARCHAR(500),
+    proof_link_3 VARCHAR(500),
+    
+    -- RATINGS (stored in main table for easy access)
+    rating_source_1 VARCHAR(50),
+    rating_1 DECIMAL(3,2),
+    review_count_1 INT DEFAULT 0,
+    rating_url_1 VARCHAR(500),
+    
+    rating_source_2 VARCHAR(50),
+    rating_2 DECIMAL(3,2),
+    review_count_2 INT DEFAULT 0,
+    rating_url_2 VARCHAR(500),
+    
+    -- LEGAL SPECIALIZATION
+    legal_focus_level ENUM('None', 'Some', 'Strong', 'Legal-only') DEFAULT 'Some',
+    law_firm_size_fit TEXT,
+    legal_delivery_years INT,
+    legal_references_available ENUM('Y', 'N', 'Unk') DEFAULT 'Unk',
+    legal_case_studies_count INT DEFAULT 0,
+    
+    -- SECURITY & COMPLIANCE
+    has_soc2 ENUM('Y', 'N', 'Unk') DEFAULT 'Unk',
+    has_iso27001 ENUM('Y', 'N', 'Unk') DEFAULT 'Unk',
+    security_overview_link VARCHAR(500),
+    security_notes TEXT,
+    
+    -- METADATA
+    data_owner VARCHAR(100) DEFAULT 'Automated Research',
+    data_source_notes TEXT,
+    last_verified_date DATE NOT NULL,
+    status ENUM('Prospect', 'Validated', 'Active', 'Inactive', 'Do-not-use') DEFAULT 'Prospect',
+    internal_notes TEXT,
+    
+    -- TIMESTAMPS
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- INDEXES
+    INDEX idx_brand_name (brand_name),
+    INDEX idx_vendor_type (vendor_type),
+    INDEX idx_status (status),
+    INDEX idx_legal_focus (legal_focus_level),
+    INDEX idx_budget (min_project_size_usd, max_project_size_usd),
+    INDEX idx_ratings (rating_1, rating_2),
+    
+    FULLTEXT INDEX ft_search (brand_name, legal_tech_stack, platforms_experience)
+    
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- TABLE 2: VENDOR_RATINGS (Optional - for multiple ratings per source)
+-- ============================================================================
+
+DROP TABLE IF EXISTS vendor_ratings;
+
+CREATE TABLE vendor_ratings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vendor_id CHAR(36) NOT NULL,
+    rating_source VARCHAR(50) NOT NULL,
+    rating_value DECIMAL(3,2),
+    review_count INT DEFAULT 0,
+    rating_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id) ON DELETE CASCADE,
+    UNIQUE KEY (vendor_id, rating_source),
+    INDEX idx_rating_value (rating_value)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- TABLE 3: VENDOR_TECH_STACK (Optional - for detailed platform tracking)
+-- ============================================================================
+
+DROP TABLE IF EXISTS vendor_tech_stack;
+
+CREATE TABLE vendor_tech_stack (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    vendor_id CHAR(36) NOT NULL,
+    platform_name VARCHAR(100) NOT NULL,
+    expertise_level ENUM('Basic', 'Advanced', 'Expert', 'Certified') DEFAULT 'Advanced',
+    years_experience INT,
+    is_certified_partner BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id) ON DELETE CASCADE,
+    UNIQUE KEY (vendor_id, platform_name),
+    INDEX idx_platform (platform_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
