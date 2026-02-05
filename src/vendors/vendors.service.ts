@@ -66,16 +66,30 @@ export class VendorsService {
       };
     });
 
+    // Filter vendors that support the system name
+    const systemNameLower = projectCriteria.systemName.toLowerCase();
+    const systemSupportingVendors = vendorsWithScores.filter(({ vendor }) => {
+      // Check if vendor has the system in their tech stack or platforms
+      const hasSystemSupport =
+        (vendor.legal_tech_stack && vendor.legal_tech_stack.toLowerCase().includes(systemNameLower)) ||
+        (vendor.platforms_experience && vendor.platforms_experience.toLowerCase().includes(systemNameLower));
+
+      return hasSystemSupport;
+    });
+
     // Filter out vendors with 0 or null matching scores
-    const validVendors = vendorsWithScores.filter(
+    const validVendors = systemSupportingVendors.filter(
       ({ matchingScore }) => matchingScore > 0
     );
 
     // Sort by matching score (highest first)
     validVendors.sort((a, b) => b.matchingScore - a.matchingScore);
 
+    // Return only top 5 vendors
+    const top5Vendors = validVendors.slice(0, 5);
+
     // Transform to response format
-    return validVendors.map(({ vendor, matchingScore }) =>
+    return top5Vendors.map(({ vendor, matchingScore }) =>
       this.transformToResponseDto(vendor, matchingScore)
     );
   }
@@ -326,6 +340,7 @@ export class VendorsService {
       id: vendor.id,
       name: vendor.brand_name,
       logo,
+      logoUrl: vendor.logo_url || null,
       category: vendor.vendor_type || 'Technology Services',
       location,
       rating: Number(rating),

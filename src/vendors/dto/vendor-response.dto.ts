@@ -2,6 +2,7 @@ export class VendorResponseDto {
   id: number;
   name: string;
   logo: string;
+  logoUrl: string;
   category: string;
   location: string;
   rating: number;

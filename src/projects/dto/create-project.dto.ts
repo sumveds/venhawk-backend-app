@@ -13,8 +13,8 @@ export class CreateProjectDto {
 
   @IsString()
   @IsNotEmpty()
-  @IsEnum(['legal-apps', 'cloud-migration', 'enterprise-it', 'app-upgrades', 'collaboration', 'security', 'data-archive', 'other'], {
-    message: 'projectCategory must be one of: legal-apps, cloud-migration, enterprise-it, app-upgrades, collaboration, security, data-archive, other',
+  @IsEnum(['legal-apps', 'cloud-migration', 'enterprise-it', 'app-bug-fixes'], {
+    message: 'projectCategory must be one of: legal-apps, cloud-migration, enterprise-it, app-bug-fixes',
   })
   projectCategory: string;
 

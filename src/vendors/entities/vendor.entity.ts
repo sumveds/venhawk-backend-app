@@ -24,6 +24,9 @@ export class Vendor {
   @Column({ type: 'varchar', length: 500, nullable: false })
   website_url: string;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  logo_url: string;
+
   // COMPANY DETAILS
   @Column({ type: 'varchar', length: 100, default: 'USA' })
   hq_country: string;
